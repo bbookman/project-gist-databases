@@ -1,4 +1,8 @@
-import requests
+import requests, pdb
+import os
+import json
+import responses, pdb
+from requests import exceptions
 
 BASE_URL =  'https://api.github.com/'
 
@@ -6,8 +10,10 @@ BASE_URL =  'https://api.github.com/'
 def import_gists_to_database(db, username, commit=True):
     url = BASE_URL + 'users/{username}/gists'.format(username=username)
     response = requests.get(url)
+    response.raise_for_status()
+    # if response.status_code == 404:
+    #     raise exceptions.HTTPError('{username}-doesnt-exist'.format(username = username))
     data = response.json()
-    print(data)
     for gist in data:
         params = {
             'github_id': gist['id'],
@@ -35,5 +41,13 @@ def import_gists_to_database(db, username, commit=True):
             :comments, :comments_url
         );"""
         
+        db.execute(INSERT_INTO_GIST, params)
         if commit:
             db.commit()
+
+        # query = 'SELECT COUNT(*) FROM gists;'
+        # cursor = db.execute(query)
+        # pdb.set_trace()
+        # count = cursor.fetchone()[0]
+        # print(count)
+        
