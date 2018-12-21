@@ -1,7 +1,7 @@
 import os
 import json
 import pytest
-import responses
+import responses, pdb
 
 from gists_database.importer import import_gists_to_database
 
@@ -36,6 +36,7 @@ def test_importer_imports_data_correctly(
     import_gists_to_database(gists_database, 'gvanrossum')
 
     query = 'SELECT COUNT(*) FROM gists;'
+    #pdb.set_trace()
     cursor = gists_database.execute(query)
     count = cursor.fetchone()[0]
     assert count == 7
